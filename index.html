@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NTonne Bot</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      color: white;
+      overflow-x: hidden;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #1c1c1c;
+      padding: 15px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .header h1 {
+      font-size: 20px;
+      margin: 0;
+      color: #00aaff;
+    }
+    .wallet {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wallet span {
+      font-size: 14px;
+      color: #ddd;
+    }
+    .wallet button {
+      background: linear-gradient(135deg, #009eff, #0077cc);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .wallet button:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+    .content {
+      padding: 20px;
+      padding-bottom: 80px;
+      min-height: calc(100vh - 120px);
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background-color: #1c1c1c;
+      padding: 12px 0;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.5);
+      z-index: 10;
+    }
+    .bottom-nav div {
+      color: #bbb;
+      font-size: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .bottom-nav .active {
+      color: #00aaff;
+    }
+    .bottom-nav i {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+    .nft-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      padding: 10px;
+      min-width: 320px;
+      justify-content: start;
+    }
+    .nft-card {
+      background: #222;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+    .nft-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,170,255,0.3);
+    }
+    .nft-card img {
+      width: 100%;
+      border-radius: 10px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      loading: lazy;
+    }
+    .nft-name {
+      font-size: 14px;
+      margin: 8px 0 4px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .nft-model {
+      color: #888;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .nft-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .grew {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 20px;
+      color: #888;
+    }
+    .grew p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .grew a {
+      color: #00aaff;
+      text-decoration: none;
+    }
+    .grew a:hover {
+      text-decoration: underline;
+    }
+    .activity-stats {
+      text-align: center;
+      margin-top: 50px;
+    }
+    .activity-stats p {
+      font-size: 18px;
+      margin: 10px 0;
+      color: #888;
+    }
+    .package-card {
+      background: #222;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+      max-width: 200px;
+      margin: 20px auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .package-card img {
+      width: 100%;
+      max-height: 200px;
+      border-radius: 10px;
+      object-fit: contain;
+      loading: lazy;
+    }
+    .package-card p {
+      font-size: 14px;
+      color: #888;
+      margin: 10px 0;
+    }
+    .package-card .buy-button {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .package-card .buy-button:hover {
+      transform: scale(1.05);
+    }
+    .price-button {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .price-button:hover {
+      transform: scale(1.05);
+    }
+    .filter-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      z-index: 5;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-button {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(0, 170, 255, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dropdown-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 170, 255, 0.5);
+    }
+    .dropdown-button i {
+      font-size: 12px;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: #1c1c1c;
+      min-width: 200px;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+      z-index: 10;
+      border-radius: 12px;
+      margin-top: 8px;
+      padding: 10px 0;
+    }
+    .dropdown-content div {
+      color: white;
+      padding: 10px 16px;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dropdown-content div:hover {
+      background: #00aaff;
+    }
+    .dropdown.active .dropdown-content {
+      display: block;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      color: #ddd;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .modal-content .close-btn:hover {
+      color: #ff5555;
+    }
+    .modal-content h3 {
+      margin: 0 0 20px;
+    }
+    .modal-content img {
+      width: 100px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .modal-content p {
+      font-size: 14px;
+      color: #ddd;
+      margin: 5px 0;
+    }
+    .modal-content .percent {
+      color: #00aaff;
+    }
+    .modal-content label {
+      display: block;
+      font-size: 14px;
+      color: #ddd;
+      margin: 10px 0 5px;
+      text-align: left;
+    }
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background: #333;
+      color: white;
+    }
+    .modal-content button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .modal-content .withdraw-btn {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+    }
+    .modal-content .cancel-btn {
+      background: #555;
+      color: white;
+    }
+    .modal-content .error {
+      color: #ff5555;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .modal-content .error i {
+      font-size: 14px;
+    }
+    #nftBuyButton:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 100;
+    }
+    .scroll-top-btn.visible {
+      opacity: 1;
+    }
+    .scroll-top-btn:hover {
+      transform: scale(1.1);
+    }
+    .search-input {
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      background: #333;
+      color: white;
+      font-size: 14px;
+      width: 100%;
+      max-width: 200px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: box-shadow 0.2s;
+    }
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 4px 10px rgba(0, 170, 255, 0.5);
+    }
+    .top-up-address {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .top-up-address p {
+      font-size: 12px;
+      word-break: break-all;
+      margin: 0;
+    }
+    .top-up-address button {
+      background: #555;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .countdown {
+      font-size: 16px;
+      color: #00aaff;
+      margin: 10px 0;
+    }
+    .processing {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #00aaff;
+      font-size: 12px;
+    }
+    .processing i {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 600px) {
+      .nft-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        min-width: 280px;
+      }
+      .header h1 {
+        font-size: 16px;
+      }
+      .wallet button {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+      .dropdown-button {
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+      .search-input {
+        max-width: 150px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>NTonne Bot</h1>
+    <div class="wallet">
+      <span>0.00 TON</span>
+      <button onclick="openTopUpModal()">+</button>
+      <button onclick="openWithdrawModal()">-</button>
+      <button onclick="window.open('https://t.me/NTonne', '_blank')">Channel</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="market" class="section active">
+      <div class="filter-container">
+        <div class="dropdown" id="nameDropdown">
+          <div class="dropdown-button" onclick="toggleDropdown('nameDropdown')">NFT's <i class="fas fa-chevron-down"></i></div>
+          <div class="dropdown-content" id="nameFilter">
+            <div onclick="filterNFTs('All')">All</div>
+            <div onclick="filterNFTs('Plush Pepe')">Plush Pepe</div>
+            <div onclick="filterNFTs('Durov’s Cap')">Durov’s Cap</div>
+            <div onclick="filterNFTs('Precious Peach')">Precious Peach</div>
+            <div onclick="filterNFTs('Astral Shard')">Astral Shard</div>
+            <div onclick="filterNFTs('Perfume Bottle')">Perfume Bottle</div>
+            <div onclick="filterNFTs('Mini Oscar')">Mini Oscar</div>
+            <div onclick="filterNFTs('Ion Gem')">Ion Gem</div>
+            <div onclick="filterNFTs('Swiss Watch')">Swiss Watch</div>
+            <div onclick="filterNFTs('Genie Lamp')">Genie Lamp</div>
+            <div onclick="filterNFTs('Signet Ring')">Signet Ring</div>
+            <div onclick="filterNFTs('Vintage Cigar')">Vintage Cigar</div>
+            <div onclick="filterNFTs('Eternal Rose')">Eternal Rose</div>
+            <div onclick="filterNFTs('Magic Potion')">Magic Potion</div>
+            <div onclick="filterNFTs('Kissed Frog')">Kissed Frog</div>
+            <div onclick="filterNFTs('Scared Cat')">Scared Cat</div>
+            <div onclick="filterNFTs('Voodoo Doll')">Voodoo Doll</div>
+            <div onclick="filterNFTs('Sharp Tongue')">Sharp Tongue</div>
+            <div onclick="filterNFTs('Loot Bag')">Loot Bag</div>
+            <div onclick="filterNFTs('Diamond Ring')">Diamond Ring</div>
+            <div onclick="filterNFTs('Toy Bear')">Toy Bear</div>
+            <div onclick="filterNFTs('Top Hat')">Top Hat</div>
+            <div onclick="filterNFTs('Evil Eye')">Evil Eye</div>
+          </div>
+        </div>
+        <div class="dropdown" id="priceDropdown">
+          <div class="dropdown-button" onclick="toggleDropdown('priceDropdown')">Price <i class="fas fa-chevron-down"></i></div>
+          <div class="dropdown-content" id="priceFilter">
+            <div onclick="sortNFTs('high-to-low')">Price: Highest to Lowest</div>
+            <div onclick="sortNFTs('low-to-high')">Price: Low to High</div>
+          </div>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search NFTs..." class="search-input">
+      </div>
+      <h2>Market</h2>
+      <div class="nft-grid" id="nftGrid">
+        <!-- NFTs will be added dynamically via JavaScript -->
+      </div>
+    </div>
+
+    <div id="auctions" class="section">
+      <h2>Auctions</h2>
+      <p>Coming soon.</p>
+    </div>
+    <div id="gifts" class="section">
+      <h2>My Gifts</h2>
+      <div class="grew">
+        <h3>No Gifts Available</h3>
+        <p>Do you want to sell a gift? Want to transfer it to <a href="https://t.me/giftRelayer_NTonne" target="_blank">@giftRelayer_NTonne</a></p>
+      </div>
+    </div>
+    <div id="package" class="section">
+      <h2>Package</h2>
+      <div class="package-card">
+        <img src="https://wtston.com/assets/images/games/lootboxes/peach_party_open.webp" alt="Random Gift">
+        <p>Random Gift</p>
+        <button class="buy-button" onclick="openBuyModal()">Buy <span>2 TON</span></button>
+      </div>
+    </div>
+    <div id="activity" class="section">
+      <h2>Activity</h2>
+      <div class="activity-stats">
+        <p>Available Gifts: <span id="giftCount">58</span></p>
+        <p>Sales Volume: <span id="sellCount">15</span></p>
+        <p>Purchase Volume: <span id="buyCount">20</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="topUpModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('topUpModal')"><i class="fas fa-times"></i></span>
+      <h3>Top Up Your Account</h3>
+      <p>Send funds to this address:</p>
+      <div class="top-up-address">
+        <p>UQClwREuJ6VsDd54BQatO-a5Zhn3M29DQHGTIMWyxQcIP3x1</p>
+        <button onclick="copyAddress()">Copy</button>
+      </div>
+      <label for="transactionId">Transaction ID</label>
+      <input type="text" id="transactionId" placeholder="Enter transaction ID">
+      <div class="countdown" id="countdown10min">10:00</div>
+      <button class="withdraw-btn" onclick="submitTopUp()">Done</button>
+      <p class="error" id="topUpErrorMessage" style="display: none;"><i class="fas fa-times-circle"></i> Please enter the transaction ID</p>
+      <p class="processing" id="processingMessage" style="display: none;"><i class="fas fa-spinner"></i> Processing...</p>
+    </div>
+  </div>
+
+  <div class="modal" id="withdrawModal">
+    <div class="modal-content">
+      <h3>Withdraw Balance</h3>
+      <label for="walletAddress">Wallet Address</label>
+      <input type="text" id="walletAddress" placeholder="Enter wallet address">
+      <label for="amount">Amount</label>
+      <input type="number" id="amount" step="0.01" value="0.00" placeholder="0.00">
+      <div style="display: flex; justify-content: center; gap: 10px;">
+        <button class="withdraw-btn" onclick="withdraw()">Withdraw</button>
+        <button class="cancel-btn" onclick="closeModal('withdrawModal')">Cancel</button>
+      </div>
+      <p class="error" id="errorMessage" style="display: none;"><i class="fas fa-times-circle"></i> You have no funds</p>
+    </div>
+  </div>
+
+  <div class="modal" id="buyModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('buyModal')"><i class="fas fa-times"></i></span>
+      <img src="https://wtston.com/assets/images/games/lootboxes/peach_party_open.webp" alt="Random Gift">
+      <h3>Gift Package Win Rates 🎁</h3>
+      <p>Mini Oscar: 2%</p>
+      <p>Precious Peach: 1.2%</p>
+      <p>Neko Helmet: 2.1%</p>
+      <p>0.2 TON: 5%</p>
+      <p>0.8 TON: 3.5%</p>
+      <button class="withdraw-btn" onclick="buyPackage()">Buy</button>
+      <p class="error" id="buyErrorMessage" style="display: none;"><i class="fas fa-times-circle"></i> Please top up your balance</p>
+    </div>
+  </div>
+
+  <div class="modal" id="nftBuyModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('nftBuyModal')"><i class="fas fa-times"></i></span>
+      <img id="nftImage" src="" alt="NFT" onerror="this.src='https://via.placeholder.com/100'">
+      <h3 id="nftName"></h3>
+      <p>Model: <span class="percent" id="nftModel"></span></p>
+      <p>Symbol: <span class="percent" id="nftSymbol"></span></p>
+      <p>Backdrop: <span class="percent" id="nftBackdrop"></span></p>
+      <button class="withdraw-btn" id="nftBuyButton" onclick="buyNFT()"><span id="nftPrice"></span></button>
+      <p class="error" id="nftBuyErrorMessage" style="display: none;"><i class="fas fa-exclamation-circle"></i> Please top up your balance</p>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div onclick="showSection('market', this)" class="active">
+      <i class="fas fa-store"></i>
+      Market
+    </div>
+    <div onclick="showSection('auctions', this)">
+      <i class="fas fa-gavel"></i>
+      Auctions
+    </div>
+    <div onclick="showSection('gifts', this)">
+      <i class="fas fa-gift"></i>
+      My Gifts
+    </div>
+    <div onclick="showSection('package', this)">
+      <i class="fas fa-magic"></i>
+      Package
+    </div>
+    <div onclick="showSection('activity', this)">
+      <i class="fas fa-chart-line"></i>
+      Activity
+    </div>
+  </div>
+
+  <button class="scroll-top-btn" onclick="scrollToTop()"><i class="fas fa-arrow-up"></i></button>
+
+  <script>
+    // NFT Data with fixed percentages and prices
+    const nftData = [
+      // Plush Pepe
+      { name: "Plush Pepe", count: 1, price: 310.00, model: "Model #456", image: "https://i.ibb.co/d4CQ65pK/g2hz-EIEea-D4c-EFcm-SLEJq-Zj5x8i-Rn-L8q-RI03-Um9-Szjzg-PLu-Mv3a-WJQAVFZQXC-7f-Su-Ut-GCXt-P5x-Fz-Vs-R.jpg", modelPercent: "2.5", symbolPercent: "1.8", backdropPercent: "1.5" },
+      { name: "Plush Pepe", count: 1, price: 298.00, model: "Model #1798", image: "https://i.ibb.co/gbsPJyPn/v7-Pg-Ndt-DXH7-N02-O-An-UETA-XILk-R1-A7-BAX5-SFw-AB0-CKsb-EELb-Vg3v6p-GVRjrie-NWIx-IKn-Vge-Uay2-Sc-Y.jpg", modelPercent: "2.0", symbolPercent: "2.0", backdropPercent: "1.8" },
+      // Durov’s Cap
+      { name: "Durov’s Cap", count: 1, price: 90.00, model: "Model #774", image: "https://i.ibb.co/3yfMNLff/oo-YQJhp-JG3-ZE75znpz-Ud-H2-v-UOt-GPam-R-68-VL6k-SX2q7g-D8-RMFn-XGjp-HWhro-WBB10-B2-JO5o-GYt5tn-Piv.jpg", modelPercent: "2.5", symbolPercent: "1.5", backdropPercent: "1.3" },
+      { name: "Durov’s Cap", count: 1, price: 93.00, model: "Model #900", image: "https://i.ibb.co/HDC5TtjQ/Vlat-Q4pj-HZOUbc-Sd-Ah-DTu-ATHHSco-Y8jelep-CUpatl-SNTAwtz-NV7-Way-Mx-Oue-Q4s43-D7tw-U7a-Ycl9ue-Dx-Ul.jpg", modelPercent: "2.0", symbolPercent: "1.0", backdropPercent: "1.0" },
+      { name: "Durov’s Cap", count: 1, price: 89.80, model: "Model #573", image: "https://i.ibb.co/84gH31SS/d2w-L0w-ICvk4-Uj-QMSnz-W-RZAhe3s-Xn-Gw1-Le6-Igjyf-Yq0sp-Snnp-Y63-Ql-Es-UKxsi-Bnmce3-Cz-Y31-Coub-Hg-P.jpg", modelPercent: "2.8", symbolPercent: "2.0", backdropPercent: "1.5" },
+      // Precious Peach
+      { name: "Precious Peach", count: 1, price: 48.00, model: "Model #1723", image: "https://i.ibb.co/T5tVQdN/p-Moa-Glbxr3j-Ln-GKw-Pdm2psx5-Pp-XPZPO3hb-Zz-L9-PKb-Ped-Uxu-LHQi4u77a-Ub6-Xy-f-Cjj-Pz-Y6-XE44d-Vrxx.jpg", modelPercent: "1.5", symbolPercent: "0.5", backdropPercent: "1.0" },
+      { name: "Precious Peach", count: 1, price: 50.00, model: "Model #900", image: "https://i.ibb.co/0yr6jBCh/Kz-O3-V4-SVzs-WFhv-Gs-Qh74-Otv-I1izk-n-Tbw-Gtw-Fypxa-DJDEKWAdb-Ck-SY9lx-DD-a-JE4m8e-Ff1d2o-AS38-Qd-T.jpg", modelPercent: "2.0", symbolPercent: "1.0", backdropPercent: "1.2" },
+      { name: "Precious Peach", count: 1, price: 49.50, model: "Model #573", image: "https://i.ibb.co/v4pf71MC/r-XZVR6-TCwg9-Pb-YYIi-KFt-Okvu-Vry-B4-PVq-Rj-MYmon-LY7-Mz-4-Ol9qojz-Yf-NIfs8ax-HQi-Dc-L3-R-ce-S9-GPJ.jpg", modelPercent: "2.5", symbolPercent: "1.5", backdropPercent: "1.4" },
+      // Astral Shard
+      { name: "Astral Shard", count: 1, price: 16.00, model: "Model #960", image: "https://i.ibb.co/jkF0LRGP/LUk1ql-PZEk-Joc960a-Wz-Gpw-VKt-CY-RSokp-CY-gu-IOai-Qr-Yy-UGGfy-ijk-Fhh-SKKe-RNYIpxiah-XKy4-Hh-CHqg-N.jpg", modelPercent: "1.5", symbolPercent: "0.5", backdropPercent: "1.0" },
+      { name: "Astral Shard", count: 1, price: 15.00, model: "Model #4856", image: "https://i.ibb.co/dJPYYS5R/UNW4ux-ROKoys-TSj-XNw-B2-Qo-Kl-QLq-Mnkhp-UL9-Pm-MMw-6-Kk-QJGM-w-Xw8-Iw-Y-l-Mz-7-HI6b-WEf8-Ee5-OYOZEC.jpg", modelPercent: "2.8", symbolPercent: "1.2", backdropPercent: "1.2" },
+      // Perfume Bottle
+      { name: "Perfume Bottle", count: 1, price: 13.99, model: "Model #3936", image: "https://i.ibb.co/XkxDHk19/i6f1-Fr-IYUw-DXy-p-Lwc6n-ZUPO2-Jgcin-ACQ06-Uw-DLk-Bbbl0tq8c-Vc-Mcv2y-x18si-J9b-Mi-Sp1-t-ZV5caya-B2q.jpg", modelPercent: "2.0", symbolPercent: "1.0", backdropPercent: "1.2" },
+      { name: "Perfume Bottle", count: 1, price: 13.00, model: "Model #2216", image: "https://i.ibb.co/TxC7hVdg/f-Wkb-Ozw-Eec25w-Yx63z5-A6-DNRBRl-Y9-J7vtq-Se-VSIo-QLHk-O5-Nphv-LMu-X0-Aicy-Rrlma1-Z8-CJVRBHp0-W6-G4.jpg", modelPercent: "2.5", symbolPercent: "1.5", backdropPercent: "1.4" },
+      // Mini Oscar
+      { name: "Mini Oscar", count: 1, price: 13.83, model: "Model #3456", image: "https://i.ibb.co/d0vzWZ8c/Pej-ZUy3ni-HAClw5-KAXj88-ZJ78-C-I6-Tdl-Zi-Ttrs4ya-Ol-HWSMVl-Tn-ZYGW1-Xkr442cb3-AWnke63-HUWNLIl82w-BH.jpg", modelPercent: "2.2", symbolPercent: "2.5", backdropPercent: "1.7" },
+      { name: "Mini Oscar", count: 1, price: 13.00, model: "Model #117", image: "https://i.ibb.co/14g5yHV/v-IT-l-TOqv5-Z96jd-Sat-Pit-IAl-Fv-Tt-PD5-Qn4-Qo-h-Hb-RL-g2-Tx-Ijr4f-Ub-C3-TM1-U-HXp7-fhsku-XYyv3t-Nc.jpg", modelPercent: "1.8", symbolPercent: "1.0", backdropPercent: "1.3" },
+      // Ion Gem
+      { name: "Ion Gem", count: 1, price: 30.00, model: "Model #658", image: "https://i.ibb.co/s9TJcdtd/g-Ht-Nv-Co4d9z9i-SXKk-VM-zwhyg-Fi-Rp-XM2o2-Vo34-Vxt-LQF3-Rasx-Cpwib-Bh-M7k-Ym-Sf-LQEKZPy6ci-RWp-2-E9.jpg", modelPercent: "3.0", symbolPercent: "2.8", backdropPercent: "1.9" },
+      { name: "Ion Gem", count: 1, price: 29.40, model: "Model #1927", image: "https://i.ibb.co/rK4gZcLM/Mb-Gl8oycv-QAs-DQS1-AOER9-M86-OA5h0od-HHRs9-HVn-ILV0-YAo-H8-It5chv-EP-k-L-5f9pm-Ukc-T-hw4-RLZKPMjnr.jpg", modelPercent: "2.7", symbolPercent: "1.5", backdropPercent: "1.6" },
+      // Swiss Watch
+      { name: "Swiss Watch", count: 1, price: 7.50, model: "Model #18753", image: "https://i.ibb.co/23P14G5j/KDqr-YYSevl3be-Hp-VC1-Qwj79m-UHbkyi-Xtn-L8n5gt-Bzge-KDAtjje-E9mf-G8k6f-QP-rf2ym-Dh-LMnqe-Vqu8-OVZ09y.jpg", modelPercent: "1.2", symbolPercent: "0.8", backdropPercent: "1.1" },
+      { name: "Swiss Watch", count: 1, price: 8.00, model: "Model #5381", image: "https://i.ibb.co/HTDPv49P/ctp-Wxms-X1-Sjdh8-OXPUqi-WUie-VHYrz-EZCbj-C18-Sgy35z-S6-y5-Ru-UCk-FAw-Jyq-PFEzprr1-Hg2vxas-Lree-FQGQ.jpg", modelPercent: "1.9", symbolPercent: "1.3", backdropPercent: "1.4" },
+      // Genie Lamp
+      { name: "Genie Lamp", count: 1, price: 4.80, model: "Model #1799", image: "https://i.ibb.co/hFR5JnqZ/Pw-QHDpt-W4hjp-YP1tk-Osaiq-UPJ1-BO9-NXvk-Smjm45j88t-HMl8-FHw3-Z5-Xj-J10ax-Pg-AYy-BBNRc-Ffuxjk-Sg0-Nq.jpg", modelPercent: "2.3", symbolPercent: "2.2", backdropPercent: "1.5" },
+      { name: "Genie Lamp", count: 1, price: 4.00, model: "Model #5166", image: "https://i.ibb.co/VYg9T1T5/RGv-L3-Yf4-Br-NJy-Mh-bow-H5-ZUti-LEdb-MWVN8mycjr-TVbk-BXDBEn-GV-0-TX2v-SJQq-JF9-VHk-Xn-LJFCGZul-en-J.jpg", modelPercent: "2.1", symbolPercent: "1.7", backdropPercent: "1.2" },
+      { name: "Genie Lamp", count: 1, price: 4.40, model: "Model #5071", image: "https://i.ibb.co/JLBVGNm/i6-D8b2fwe9l8-FHd5-M-x-AQx-o-Di-Bd-JHa3-Z8-EBPk-Lbrvq-P-M4-Gb2p-PJ1x6qoo-E7a6md-P4-WO631vle-Ou-Kn-PP.jpg", modelPercent: "1.7", symbolPercent: "1.0", backdropPercent: "1.0" },
+      // Signet Ring
+      { name: "Signet Ring", count: 1, price: 7.00, model: "Model #14488", image: "https://i.ibb.co/zWDMrKwZ/si-Qd8-An-Vd79x-P8-Wbem-T-M-s1-Fpin-B1-Kk4btej7-Pc-A9-21zp-Cs-B4-Iq-Xh-Fj2-PSVFCG0-VNXf-BQZj-BCX-5-J.jpg", modelPercent: "2.4", symbolPercent: "2.3", backdropPercent: "1.8" },
+      { name: "Signet Ring", count: 1, price: 6.80, model: "Model #10951", image: "https://i.ibb.co/Kj37xtFQ/SYQrntln-S6-Nu4-WFs-GPZ0-F8-Zq-RJLAh-LTrmg7-DNR3cy4my-Sb-Eb3p-SSZMMghxwu-WIsp3lk6r-OUd-R5b-Rke0hnpa.jpg", modelPercent: "2.6", symbolPercent: "2.0", backdropPercent: "1.6" },
+      { name: "Signet Ring", count: 1, price: 6.90, model: "Model #14542", image: "https://i.ibb.co/gMtq9fGt/f-AMPn8u-JWeyz-AOA-HLYzw-FLk-Ns-VGMU0-Wt-Hf9-BRR5r-Gafttr-TP1-Dxjx-TA4x-Eb-yz-GW0h-Wk8-BJej-Or-Qp-Jc.jpg", modelPercent: "2.0", symbolPercent: "1.8", backdropPercent: "1.4" },
+      { name: "Signet Ring", count: 1, price: 7.60, model: "Model #13416", image: "https://i.ibb.co/5J4FzWN/lj-GGi-Gh0-Ug-OH9p-Whm7-I53-s-Ph4r9i-JO73-Sb-H87w3-Ko-FDI7qos-F53n-RQ5kkfgva-Ke-Ng-Lxa-C-5-U4nv-w-P0.jpg", modelPercent: "1.5", symbolPercent: "1.5", backdropPercent: "1.2" },
+      // Vintage Cigar
+      { name: "Vintage Cigar", count: 1, price: 6.70, model: "Model #1891", image: "https://i.ibb.co/Y71c5kgk/RN21-R3-N3-YBAi-CKv-Idl-HB7563-Z-Hd9a-FGDbbgj-VTJih-IUGa-Zs-Deuf-DSCeh-Mrli-SUTIPMZI-n-Or473cj-KRDOe.jpg", modelPercent: "2.8", symbolPercent: "2.7", backdropPercent: "1.9" },
+      { name: "Vintage Cigar", count: 1, price: 6.50, model: "Model #10366", image: "https://i.ibb.co/HT2c9WCc/an-RNas-Nb1ne-C7-TASFk9-O4-Nwmm-db-ONk-SBrnb-Vamznd-PFTRz7l-ACmp-Ia-K-y-Py-Yq-IAXpjeqnkeo-M-b3l-He-T.jpg", modelPercent: "2.5", symbolPercent: "2.4", backdropPercent: "1.7" },
+      { name: "Vintage Cigar", count: 1, price: 6.00, model: "Model #11233", image: "https://i.ibb.co/Wvx7dJT7/q-Yk-HSD41kz-EAiu-XH32l-Sl9jzgc-TWp-XPa-DOwh-Fw-Uv-PYsug27r-Ko-Q-6duj5-VPy-YYd-Hjl-BY01-As-A9-IJ5u4r.jpg", modelPercent: "2.2", symbolPercent: "2.1", backdropPercent: "1.5" },
+      // Eternal Rose
+      { name: "Eternal Rose", count: 1, price: 3.00, model: "Model #15933", image: "https://i.ibb.co/3y7fPQrJ/Ot-YXJ-apd7aa-FJ9rx-zr568w-Ig-ZNtv-Aeh-Njll-q-4im-I-xhrx-IGzcn-D-s8b5-Yfn-Uxn-FBLo-Lpfk-n-M953-Gzs63.jpg", modelPercent: "1.8", symbolPercent: "1.0", backdropPercent: "1.3" },
+      { name: "Eternal Rose", count: 1, price: 3.20, model: "Model #16166", image: "https://i.ibb.co/PstXvZHw/v-IXW9a-Uej-Znw28zgsnji-KZHBCRM0-AA10kvvv-Z3cwx32-Pn-Aq-Yw00-OPHf-Pp-Z28b-NV6dsmy-W-f14n1q-C-UK68-Xq.jpg", modelPercent: "1.6", symbolPercent: "0.8", backdropPercent: "1.1" },
+      { name: "Eternal Rose", count: 1, price: 3.10, model: "Model #14511", image: "https://i.ibb.co/5Wrv3MQW/GAvn-Xm9-U3h-IPPdkn-t-I9-Cmp-IDRQ-w-UTLid-Vadv-QVZF-M1-KZFa-O7-Syer-Rw-U43g1k-E3-Q8-TX7ou-Mb-AV3a-Ad.jpg", modelPercent: "1.4", symbolPercent: "0.6", backdropPercent: "1.0" },
+      // Magic Potion
+      { name: "Magic Potion", count: 1, price: 7.50, model: "Model #277", image: "https://i.ibb.co/B2B7VmtY/m4t-LYhw0f4t-NHDPzfg-D3bx-Qm-U-ga5t-EODy-G5l-2-Qm2-HIa-Xbo5ghfe56-Ty-Gepdpe1ev-YVfzk-Gn2ge-Zq-Bbz8-E.jpg", modelPercent: "2.9", symbolPercent: "2.6", backdropPercent: "1.8" },
+      { name: "Magic Potion", count: 1, price: 6.88, model: "Model #4491", image: "https://i.ibb.co/xtxC6hsq/k-E5-N-v-Np-L2x-ACCENn-JO6-NDn-Gd0w-s-TNiz9-Da96-U2vdx-Zm-N0-RPTmvvj-Pi-Qt8-QDHsm-ONzb-Hq885z-OQ7cx.jpg", modelPercent: "2.7", symbolPercent: "2.4", backdropPercent: "1.6" },
+      { name: "Magic Potion", count: 1, price: 6.80, model: "Model #4018", image: "https://i.ibb.co/20w9pnHT/n-O59dsx-Z21te-CFw-M3-ARPq-HKjx3xh-Pqdhsh-Nj6-M1-Q8t9-Nc-Y-Hc-I0-S3-RNArnte-E-Uq-Umv-W8-Gu-Ui6b-Pf5u.jpg", modelPercent: "2.5", symbolPercent: "2.2", backdropPercent: "1.4" },
+      { name: "Magic Potion", count: 1, price: 6.20, model: "Model #4561", image: "https://i.ibb.co/Mxpj3XD7/t-W1l-HDQu-Fa-O7kk6jxah-SX6-YMm-j-BN6l0ao9-Iw7-Ke5-Im-Qia7-Rl-Fz-Qn-Yz7-P1u-C9-Twclgc4o-NVq-IG0i-Dwo.jpg", modelPercent: "2.3", symbolPercent: "2.0", backdropPercent: "1.2" },
+      // Kissed Frog
+      { name: "Kissed Frog", count: 1, price: 4.00, model: "Model #1509", image: "https://i.ibb.co/6RwqzgMT/CD7f-L-4qg-Uiu5yrwh-ATto3-Vny-KRq0p8-Fer-LKye4-Dyvz-Sr-J-1-CPduv-Jg7v-PHKw-Rb1usk-Ar-Jaah0t-ZQQv-Cpv.jpg", modelPercent: "1.9", symbolPercent: "1.5", backdropPercent: "1.3" },
+      { name: "Kissed Frog", count: 1, price: 3.66, model: "Model #1507", image: "https://i.ibb.co/4RjJGBWj/Tw7m-FXds5-Ukck3b-O1-NPe-Ubz-Gqr9ns-F5uzfb2o-L26-Jj-JVj3xdy-CULQX-9-Cc-Dz-I2v-Ahv-Haii-Jq-Jv2z-PY-jl.jpg", modelPercent: "1.7", symbolPercent: "1.3", backdropPercent: "1.1" },
+      // Scared Cat
+      { name: "Scared Cat", count: 1, price: 8.50, model: "Model #865", image: "https://i.ibb.co/TDXtLYbk/oopsee-LB2-RCzm72bfu-Gqg-HY2o-FPDvel-YV25-XBi6t-FZK246vup-P9-ET78v-B-8-GE-L-k-Lew-J4w-FTp-AZ2t-Uzl1.jpg", modelPercent: "2.0", symbolPercent: "1.8", backdropPercent: "1.5" },
+      { name: "Scared Cat", count: 1, price: 8.00, model: "Model #866", image: "https://i.ibb.co/rRyZLh0j/f-c-RH4g0-Id-LRJsv-W3-Ao8a-C9-Hi4w-Ld1y-Qhbdtm-Zl-D2-Sm1w3-Ztp-P7-NNKZWwl-Y0-52-WWGKn47-PA-WFIW-opv.jpg", modelPercent: "2.2", symbolPercent: "2.0", backdropPercent: "1.7" },
+      { name: "Scared Cat", count: 1, price: 8.80, model: "Model #873 Watts", image: "https://i.ibb.co/pvKR5tYB/dhz-Nvf1ef-GLE1ap-JI-fx1-DVMh-K0s-G64ar-Lb3-VGhjgsfn-Cvw-Xa-Xhz-UDJSm-My-An-Hra-Dg-M8-N4z-cmk6-AGMwy.jpg", modelPercent: "2.1", symbolPercent: "0.3", backdropPercent: "1.4" },
+      { name: "Scared Cat", count: 1, price: 7.90, model: "Model #1141", image: "https://i.ibb.co/rfwdH6fM/q-Nw-Om-DYIZb64skza-Wq9-Tg-E90v3-ZOKt-VL1l-LE0-YXA6-GKU2-Nvw-IG0ic-Py3-UREH4h-LW2ncy8a0-FQ72-Uc-Nh8.jpg", modelPercent: "2.6", symbolPercent: "2.4", backdropPercent: "1.8" },
+      // Voodoo Doll
+      { name: "Voodoo Doll", count: 1, price: 1.50, model: "Model #22513", image: "https://i.ibb.co/rGhh2pQt/BK6vk-AC3-Sc9-DO43-Q9owm-Zo-Hcp-Gr-Ix-Iqqd-LIdx-Orrk-p-Ww-H18-DNp-K4p3jm-Sk-Sfc-TSjLod-NWs-N6-EAp-OSn.jpg", modelPercent: "1.3", symbolPercent: "0.5", backdropPercent: "1.0" },
+      { name: "Voodoo Doll", count: 1, price: 1.88, model: "Model #10201", image: "https://i.ibb.co/BKT2ZCXM/o-LWdj1-Qefr18-Mxv-Rhi-YMgmuvu-F7w1hv-QSi-PIZx-Ot0-Eeg-Id-Wgf-Z1-Lu-Xx-Pm-QGIxx-SEl-ZA8-Rn9-CA74s-A1.jpg", modelPercent: "1.5", symbolPercent: "0.7", backdropPercent: "1.2" },
+      { name: "Voodoo Doll", count: 1, price: 1.70, model: "Model #4720", image: "https://i.ibb.co/RXpG3DB/t-Ole62v-Scqkh-AQI-Sc-N6lr-TYs6-UU-M0-ZCb5-Id-Zc-V-VDGSCkzuni-Xk-J53-VQRGsc-Jx6-KTMnqi-Wss-Ywy-KXVd.jpg", modelPercent: "1.7", symbolPercent: "0.9", backdropPercent: "1.4" },
+      // Sharp Tongue
+      { name: "Sharp Tongue", count: 1, price: 6.50, model: "Model #2945", image: "https://i.ibb.co/XfLRT115/JXSdn-Uc-Mky5-TTDLQDOA6-NARzz-Q-Z1y8-XLSX6z-Gjg0u-UJ2e0w-ST0np-NQVQSP-a-Gjy94ca-SXGoy1-Qd4-GEQD7-Xu.jpg", modelPercent: "2.0", symbolPercent: "1.5", backdropPercent: "1.3" },
+      { name: "Sharp Tongue", count: 1, price: 6.80, model: "Model #7469", image: "https://i.ibb.co/F4THC6gv/LLTl-PSOLRj-Xsmn-Hq-Rbx-Jiei5n-Aw-TPt-OE5-MLVnm-TIn-BK8-Oee-IPv4-G6g-BXsbej-NOYRd6jt1-Azl-Jy-LV4-Pp.jpg", modelPercent: "2.2", symbolPercent: "1.7", backdropPercent: "1.5" },
+      { name: "Sharp Tongue", count: 1, price: 6.00, model: "Model #965", image: "https://i.ibb.co/4Z9rNC0N/b-N9-T-x-ZMv-Y5-XTt-Qd-Di-DKCOy-LIK-d-AJYA-3-ZEAc-Oxu6g-O2-MVt-PU1m-Odl3-CKcg-T-Nn1-T0nff2-W-I3ij7-O.jpg", modelPercent: "2.4", symbolPercent: "1.9", backdropPercent: "1.7" },
+      { name: "Sharp Tongue", count: 1, price: 6.20, model: "Model #1167", image: "https://i.ibb.co/XfnG4ZfR/jw8bv-AOy-NFIDci-Fe-U7-XGTNwq-Ejt-K0-GV3-Wl-UAk2po-P6-a5-Bx-Ja-Wn-Yrxw-IYwl-GO2zio-LNs-RBKy-6-Mq01ub.jpg", modelPercent: "2.6", symbolPercent: "2.1", backdropPercent: "1.9" },
+      // Loot Bag
+      { name: "Loot Bag", count: 1, price: 8.20, model: "Model #5484", image: "https://i.ibb.co/BHk8gGrQ/goxw-Os-ZJibs-YBZZJpl-Lqi-Oj0e-K26-Oxa-Ep-JMU-36z8hfdq-AJm-Al-Gk5-Iw-Ulg-FAc-V4nixhs-Wc-KV1-VIPrl-Ia.jpg", modelPercent: "1.8", symbolPercent: "1.0", backdropPercent: "1.2" },
+      { name: "Loot Bag", count: 1, price: 8.00, model: "Model #10186", image: "https://i.ibb.co/gLpQ0zts/m4h-PR2-DGe1o-r-Wl7q78-JJvfajm-40l10x-MJ57v-YB9-MBQz4-E2-Hwqw-Emz-XJe-BX1sv-G16-EGq-OHyf9r-E7d-Fd3f.jpg", modelPercent: "2.0", symbolPercent: "1.2", backdropPercent: "1.4" },
+      { name: "Loot Bag", count: 1, price: 8.11, model: "Model #11703", image: "https://i.ibb.co/tPw1ghNK/pz-Hddv-Lfkbj-Y16-Olp-E-8-JPkyic5-NRZLNI6zda1-Gft60nl-I8vb-LJr4v7-U6-Iz7t-UKBo26l-Nmbh-FHEUXPT1j-Rx9.jpg", modelPercent: "2.2", symbolPercent: "1.4", backdropPercent: "1.6" },
+      // Diamond Ring
+      { name: "Diamond Ring", count: 1, price: 3.00, model: "Model #26644", image: "https://i.ibb.co/7N6Qs8R2/Yiz-Dt-DBZjc32z-R91pl-Hmj5ohbjtbz-YYe9ltz-EOW4r-Oyujr-WK-rqj9uzjf-Uv-Ig-W0ph6-Nlm-NVKzy7-AS1-VOBx7-U.jpg", modelPercent: "1.5", symbolPercent: "0.8", backdropPercent: "1.0" },
+      { name: "Diamond Ring", count: 1, price: 3.50, model: "Model #25892", image: "https://i.ibb.co/VcCSDqYJ/kban-h-G9qtzzt-Md-Rxux-Ejv42-ENHLD-7zhsnwv8-Bs-Bfp-Jg-CV7u-Tx-QPb-L6sj-WBVCOMRy58-Zw-BTUV0-Jrx3-C2fj.jpg", modelPercent: "1.7", symbolPercent: "1.0", backdropPercent: "1.2" },
+      // Toy Bear
+      { name: "Toy Bear", count: 1, price: 3.10, model: "Model #1359", image: "https://i.ibb.co/JRmF791Q/cez2-EO3u-NWzpz0hu0k-Yvx-YESIOg1wm-Dpcd4e-S5v-r-YJw-MPRo-O6e-VU3-QM1-Jh-SDUb-Lz-Sjv-Nd7-CYVvk-Ml-Xt.jpg", modelPercent: "1.9", symbolPercent: "1.2", backdropPercent: "1.4" },
+      { name: "Toy Bear", count: 1, price: 2.80, model: "Model #4020", image: "https://i.ibb.co/d4n70D3Y/a0c-VAPVlo-Nc-Wx-G7-UHZbg-M-6i-U4-Vool1-Aom6-W72-LO68w-WWSnvw-L-o-Cecrmn-Ro1m9-WXulz2u-XGNhl-VFw-TIz.jpg", modelPercent: "2.1", symbolPercent: "1.4", backdropPercent: "1.6" },
+      { name: "Toy Bear", count: 1, price: 3.11, model: "Model #31720", image: "https://i.ibb.co/3wCpqTd/Hulb98un4bv-TFlno-MGEYCMr-U5-MUH2p8-Uxj7i3-Dz-U9f71n-O1-A5s-BTT4s-GKt-WEl-WRDw-Sv-Jt35aq-E4-T4-HJosm.jpg", modelPercent: "2.3", symbolPercent: "1.6", backdropPercent: "1.8" },
+      // Top Hat
+      { name: "Top Hat", count: 1, price: 1.70, model: "Model #1136", image: "https://i.ibb.co/ZzPWcFR8/t3-EMJ4x-RL4-P2-S6-J5-Gp-HF92uz-VDSw37fj3r-JEj-UJs-slm1-PSCrnzu2-C9-DD3-HLTRHq-PWWKNMZQLJz3-Mjxdyo-S.jpg", modelPercent: "1.5", symbolPercent: "0.5", backdropPercent: "1.0" },
+      { name: "Top Hat", count: 1, price: 1.33, model: "Model #7958", image: "https://i.ibb.co/SXQjYzQJ/Ng2-C-xk-Cpp-Z-pdep-Oh-GHyc-SHMXuv-YR-ZZxcg4yc8-Glbon1-Yu-K9-Jk9grfj-Qbjwqh-Z0kf62g53-Bq-G66-Tx-SFc.jpg", modelPercent: "1.7", symbolPercent: "0.7", backdropPercent: "1.2" },
+      { name: "Top Hat", count: 1, price: 1.50, model: "Model #6764", image: "https://i.ibb.co/9ms5B7Kj/SJF-7q-CLp-F57-Lj-Rt9-Wv3gfrs-DEk-A3v-Fw-E8q-AUM-q-SFs-ZDVT8x8-OKZnk-COCkgb9m-G1-RHINrr-HLXly-Ubclf.jpg", modelPercent: "1.9", symbolPercent: "0.9", backdropPercent: "1.4" },
+      // Evil Eye
+      { name: "Evil Eye", count: 1, price: 1.10, model: "Model #1558", image: "https://i.ibb.co/N6vvpprD/cf-VCb-Xrx-TG6ofic-SAm-Qd3h-kqv1-HFuljvfo-LBEt-K5-Sqz-Qr2p3-Tc-GAf-ep-Xffl-Sj-Ou-V-k-F1-Xhf-P2-ZW8z.jpg", modelPercent: "1.2", symbolPercent: "0.4", backdropPercent: "1.0" },
+      { name: "Evil Eye", count: 1, price: 1.15, model: "Model #1523", image: "https://i.ibb.co/NnTwk5YR/IP6-DRTNx-Sj-n5qz-V-u-YOR7v-NTvk4o-Hcyq-RCdf-Vlo-EBdlf-KERG-g1eya-Cinf8-FD352d-NW3-Jfb-s-Ands-Uyn-R7.jpg", modelPercent: "1.4", symbolPercent: "0.6", backdropPercent: "1.1" },
+      { name: "Evil Eye", count: 1, price: 1.20, model: "Model #51780", image: "https://i.ibb.co/XkF9XRdr/Mg-B4l-IXwvi-D7-SSw-JVet-H4i-BPf6z-RSy1-G7ha7j-QKg-Hiap-DLeb-WVo-W3kk-f3-Rswaqda2q-Kd0rdx-Dh1v-N48o-DWxo.jpg", modelPercent: "1.6", symbolPercent: "0.8", backdropPercent: "1.2" },
+    ];
+    
+  // تهيئة Telegram Web App (اختياري)
+  function initializeTelegramWebApp() {
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand(); // فتح الصفحة على الشاشة كاملة
+      console.log('تم تهيئة Telegram Web App');
+    } else {
+      console.log('واجهة Telegram Web App غير متاحة، التشغيل كموقع ويب عادي');
+    }
+  }
+
+  // إنشاء بطاقات الـ NFTs مع إعادة المحاولة
+  function generateNFTs(attempt = 0) {
+    const nftGrid = document.getElementById('nftGrid');
+    const loading = document.getElementById('loading');
+    if (!nftGrid) {
+      if (attempt < 5) {
+        setTimeout(() => generateNFTs(attempt + 1), 200);
+      } else {
+        console.error('عنصر nftGrid غير موجود بعد 5 محاولات!');
+        if (loading) loading.style.display = 'none';
+      }
+      return;
+    }
+    if (loading) loading.style.display = 'none'; // إخفاء رسالة التحميل
+    nftGrid.innerHTML = ''; // تفريغ المحتوى السابق
+    nftData.forEach((nft) => {
+      const nftCard = document.createElement('div');
+      nftCard.className = 'nft-card';
+      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+      nftCard.innerHTML = `
+        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+        <div class="nft-name">${nft.name}</div>
+        <div class="nft-model">${nft.model}</div>
+        <div class="nft-price">
+          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+        </div>
+      `;
+      nftGrid.appendChild(nftCard);
+    });
+  }
+
+  // تهيئة الصفحة
+  function initializePage() {
+    initializeTelegramWebApp();
+    generateNFTs();
+  }
+
+  // تشغيل التهيئة لما الصفحة تتحمل
+  document.addEventListener('DOMContentLoaded', initializePage);
+
+  // تشغيل احتياطي لمتصفح تيليجرام
+  window.addEventListener('load', initializePage);
+
+  // حدث خاص بتيليجرام (إذا كان Web App مفعل)
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.onEvent('viewportChanged', initializePage);
+  }
+
+  // إظهار قسم معين وتحديث القائمة
+  function showSection(sectionId, element) {
+    document.querySelectorAll('.section').forEach(section => {
+      section.classList.remove('active');
+    });
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.classList.add('active');
+    }
+    document.querySelectorAll('.bottom-nav div').forEach(nav => {
+      nav.classList.remove('active');
+    });
+    element.classList.add('active');
+    if (sectionId === 'market') {
+      generateNFTs(); // تحديث البطاقات لما تختار قسم Market
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // فتح/قفل القائمة المنسدلة
+  function toggleDropdown(id) {
+    const dropdown = document.getElementById(id);
+    if (dropdown) {
+      dropdown.classList.toggle('active');
+    }
+  }
+
+  // قفل القوائم المنسدلة لو ضغطت برا
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown').forEach(dropdown => {
+        dropdown.classList.remove('active');
+      });
+    }
+  });
+
+  // تصفية الـ NFTs حسب الاسم
+  function filterNFTs(name) {
+    const filteredNFTs = name === 'All' ? nftData : nftData.filter(nft => nft.name === name);
+    const nftGrid = document.getElementById('nftGrid');
+    if (!nftGrid) return;
+    nftGrid.innerHTML = '';
+    filteredNFTs.forEach((nft) => {
+      const nftCard = document.createElement('div');
+      nftCard.className = 'nft-card';
+      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+      nftCard.innerHTML = `
+        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+        <div class="nft-name">${nft.name}</div>
+        <div class="nft-model">${nft.model}</div>
+        <div class="nft-price">
+          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+        </div>
+      `;
+      nftGrid.appendChild(nftCard);
+    });
+  }
+
+  // ترتيب الـ NFTs حسب السعر
+  function sortNFTs(criteria) {
+    let sortedNFTs = [...nftData];
+    if (criteria === 'high-to-low') {
+      sortedNFTs.sort((a, b) => b.price - a.price);
+    } else if (criteria === 'low-to-high') {
+      sortedNFTs.sort((a, b) => a.price - b.price);
+    }
+    const nftGrid = document.getElementById('nftGrid');
+    if (!nftGrid) return;
+    nftGrid.innerHTML = '';
+    sortedNFTs.forEach((nft) => {
+      const nftCard = document.createElement('div');
+      nftCard.className = 'nft-card';
+      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+      nftCard.innerHTML = `
+        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+        <div class="nft-name">${nft.name}</div>
+        <div class="nft-model">${nft.model}</div>
+        <div class="nft-price">
+          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+        </div>
+      `;
+      nftGrid.appendChild(nftCard);
+    });
+  }
+
+  // البحث في الـ NFTs
+  document.getElementById('searchInput').addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    const filteredNFTs = nftData.filter(nft => 
+      nft.name.toLowerCase().includes(query) || 
+      nft.model.toLowerCase().includes(query)
+    );
+    const nftGrid = document.getElementById('nftGrid');
+    if (!nftGrid) return;
+    nftGrid.innerHTML = '';
+    filteredNFTs.forEach((nft) => {
+      const nftCard = document.createElement('div');
+      nftCard.className = 'nft-card';
+      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+      nftCard.innerHTML = `
+        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+        <div class="nft-name">${nft.name}</div>
+        <div class="nft-model">${nft.model}</div>
+        <div class="nft-price">
+          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+        </div>
+      `;
+      nftGrid.appendChild(nftCard);
+    });
+  });
+
+  // فتح نافذة Top Up مع العداد
+  function openTopUpModal() {
+    const modal = document.getElementById('topUpModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.getElementById('transactionId').value = '';
+      document.getElementById('topUpErrorMessage').style.display = 'none';
+      document.getElementById('processingMessage').style.display = 'none';
+      startCountdown();
+    }
+  }
+
+  // بدء عداد 10 دقايق
+  function startCountdown() {
+    let timeLeft = 10 * 60; // 10 دقايق بالثواني
+    const countdownElement = document.getElementById('countdown10min');
+    if (!countdownElement) return;
+    const countdownInterval = setInterval(() => {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      timeLeft--;
+      if (timeLeft < 0) {
+        clearInterval(countdownInterval);
+        countdownElement.textContent = '0:00';
+        closeModal('topUpModal');
+      }
+    }, 1000);
+    document.getElementById('topUpModal').dataset.countdownInterval = countdownInterval;
+  }
+
+  // نسخ عنوان المحفظة
+  function copyAddress() {
+    const address = 'UQClwREuJ6VsDd54BQatO-a5Zhn3M29DQHGTIMWyxQcIP3x1';
+    navigator.clipboard.writeText(address).then(() => {
+      alert('Copied!');
+    }).catch(err => {
+      console.error('فشل نسخ العنوان:', err);
+      alert('فشل نسخ العنوان.');
+    });
+  }
+
+  // إرسال معاملة Top Up
+  function submitTopUp() {
+    const transactionId = document.getElementById('transactionId').value.trim();
+    const errorMessage = document.getElementById('topUpErrorMessage');
+    const processingMessage = document.getElementById('processingMessage');
+    if (!transactionId) {
+      errorMessage.style.display = 'flex';
+      return;
+    }
+    errorMessage.style.display = 'none';
+    processingMessage.style.display = 'flex';
+    setTimeout(() => {
+      closeModal('topUpModal');
+    }, 2000); // قفل النافذة بعد 2 ثانية
+  }
+
+  // فتح نافذة Withdraw
+  function openWithdrawModal() {
+    const modal = document.getElementById('withdrawModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.getElementById('errorMessage').style.display = 'none';
+    }
+  }
+
+  // فتح نافذة Buy
+  function openBuyModal() {
+    const modal = document.getElementById('buyModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.getElementById('buyErrorMessage').style.display = 'none';
+    }
+  }
+
+  // فتح نافذة شراء NFT
+  function openNFTBuyModal(id) {
+    const [name, model] = id.split('_');
+    const nft = nftData.find(n => n.name === name && n.model === model);
+    const modal = document.getElementById('nftBuyModal');
+    if (modal && nft) {
+      document.getElementById('nftImage').src = nft.image;
+      document.getElementById('nftName').textContent = `${nft.name} - ${nft.model.replace('Model ', '')}`;
+      document.getElementById('nftModel').textContent = `${nft.modelPercent}%`;
+      document.getElementById('nftSymbol').textContent = `${nft.symbolPercent}%`;
+      document.getElementById('nftBackdrop').textContent = `${nft.backdropPercent}%`;
+      document.getElementById('nftPrice').textContent = `Buy ${nft.price.toFixed(2)} TON`; // تغيير "شراء" إلى "Buy"
+      modal.style.display = 'flex';
+      document.getElementById('nftBuyErrorMessage').style.display = 'none';
+    }
+  }
+
+  // قفل النافذة
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'none';
+      if (modalId === 'topUpModal') {
+        const countdownInterval = modal.dataset.countdownInterval;
+        if (countdownInterval) {
+          clearInterval(countdownInterval);
+        }
+      }
+    }
+  }
+
+  // دالة السحب
+  function withdraw() {
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage) {
+      errorMessage.style.display = 'flex';
+    }
+  }
+
+  // شراء الباقة
+  function buyPackage() {
+    const errorMessage = document.getElementById('buyErrorMessage');
+    if (errorMessage) {
+      errorMessage.style.display = 'flex';
+    }
+  }
+
+  // شراء NFT
+  function buyNFT() {
+    const errorMessage = document.getElementById('nftBuyErrorMessage');
+    if (errorMessage) {
+      errorMessage.style.display = 'flex';
+      setTimeout(() => {
+        closeModal('nftBuyModal');
+      }, 2000); // قفل النافذة بعد 2 ثانية
+    }
+  }
+
+  // التمرير لأعلى
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // إظهار/إخفاء زر التمرير لأعلى
+  window.addEventListener('scroll', () => {
+    const scrollBtn = document.querySelector('.scroll-top-btn');
+    if (scrollBtn) {
+      if (window.scrollY > 300) {
+        scrollBtn.classList.add('visible');
+      } else {
+        scrollBtn.classList.remove('visible');
+      }
+    }
+  });
+</script>
