@@ -265,6 +265,16 @@
     .dropdown-content div:hover {
       background: #00aaff;
     }
+    .dropdown-content .new-label {
+      display: inline-block;
+      background: #00cc00;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
     .dropdown.active .dropdown-content {
       display: block;
     }
@@ -482,6 +492,7 @@
           <div class="dropdown-button" onclick="toggleDropdown('nameDropdown')">NFT's <i class="fas fa-chevron-down"></i></div>
           <div class="dropdown-content" id="nameFilter">
             <div onclick="filterNFTs('All')">All</div>
+            <div onclick="filterNFTs('EasterEgg')">EasterEgg <span class="new-label">New</span></div>
             <div onclick="filterNFTs('Plush Pepe')">Plush Pepe</div>
             <div onclick="filterNFTs('Durov’s Cap')">Durov’s Cap</div>
             <div onclick="filterNFTs('Precious Peach')">Precious Peach</div>
@@ -639,6 +650,11 @@
   <script>
     // NFT Data with fixed percentages and prices
     const nftData = [
+      // EasterEgg
+      { name: "EasterEgg", count: 1, price: 0.50, model: "Model #21203", image: "https://i.ibb.co/rGxNswbx/u-YCsq-YJTNQsy-Dra-E-m-BGGf4-K85xgf-N-mg-SLv-RJCSpiqt-Xzu8-ZIx-HQ43a-AVf-ORHN7zn935mk-Pyk-U8tw-YTN7.jpg", modelPercent: "1.5", symbolPercent: "0.5", backdropPercent: "1.0" },
+      { name: "EasterEgg", count: 1, price: 0.60, model: "Model #21213", image: "https://i.ibb.co/9L4ZfbF/a7a-Lt-WCg-Pa-Bu-Fe-Y3d01j-F97-Q4-5q-X2e48-2k-Sv-HQu-Edz-Qd-MWDHV0zulszip2-Ku-G03-Yh-VBz-QZd-DH1e-L2.jpg", modelPercent: "1.7", symbolPercent: "0.7", backdropPercent: "1.2" },
+      { name: "EasterEgg", count: 1, price: 0.65, model: "Model #21345", image: "https://i.ibb.co/chYqWY6v/qiq-RQAsc-T1-A2-WMuv-ZUSdz9t-Kcj6-FHi-C7-DSJ4-Qo3-Ts89-v-MMLVr-LRo-F1-Lwa4-Zd7-w780okc-Va-Vy-Av46-YY.jpg", modelPercent: "1.9", symbolPercent: "0.9", backdropPercent: "1.4" },
+      { name: "EasterEgg", count: 1, price: 0.70, model: "Model #44456", image: "https://i.ibb.co/WWcZQCNC/CXsio0n-Xgl-QF6ho9-Jj-E0su-NXLQa0t-Hl64-HFH5d0-BXGC88p5gp-Aude-JJw-Dgc8paqxfabwt-T-v-ZQn-Flmo-P-Gn52.jpg", modelPercent: "2.1", symbolPercent: "1.1", backdropPercent: "1.6" },
       // Plush Pepe
       { name: "Plush Pepe", count: 1, price: 310.00, model: "Model #456", image: "https://i.ibb.co/d4CQ65pK/g2hz-EIEea-D4c-EFcm-SLEJq-Zj5x8i-Rn-L8q-RI03-Um9-Szjzg-PLu-Mv3a-WJQAVFZQXC-7f-Su-Ut-GCXt-P5x-Fz-Vs-R.jpg", modelPercent: "2.5", symbolPercent: "1.8", backdropPercent: "1.5" },
       { name: "Plush Pepe", count: 1, price: 298.00, model: "Model #1798", image: "https://i.ibb.co/gbsPJyPn/v7-Pg-Ndt-DXH7-N02-O-An-UETA-XILk-R1-A7-BAX5-SFw-AB0-CKsb-EELb-Vg3v6p-GVRjrie-NWIx-IKn-Vge-Uay2-Sc-Y.jpg", modelPercent: "2.0", symbolPercent: "2.0", backdropPercent: "1.8" },
@@ -724,325 +740,327 @@
       { name: "Evil Eye", count: 1, price: 1.15, model: "Model #1523", image: "https://i.ibb.co/NnTwk5YR/IP6-DRTNx-Sj-n5qz-V-u-YOR7v-NTvk4o-Hcyq-RCdf-Vlo-EBdlf-KERG-g1eya-Cinf8-FD352d-NW3-Jfb-s-Ands-Uyn-R7.jpg", modelPercent: "1.4", symbolPercent: "0.6", backdropPercent: "1.1" },
       { name: "Evil Eye", count: 1, price: 1.20, model: "Model #51780", image: "https://i.ibb.co/XkF9XRdr/Mg-B4l-IXwvi-D7-SSw-JVet-H4i-BPf6z-RSy1-G7ha7j-QKg-Hiap-DLeb-WVo-W3kk-f3-Rswaqda2q-Kd0rdx-Dh1v-N48o-DWxo.jpg", modelPercent: "1.6", symbolPercent: "0.8", backdropPercent: "1.2" },
     ];
-    
-  // تهيئة Telegram Web App (اختياري)
-  function initializeTelegramWebApp() {
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.ready();
-      window.Telegram.WebApp.expand(); // فتح الصفحة على الشاشة كاملة
-      console.log('تم تهيئة Telegram Web App');
-    } else {
-      console.log('واجهة Telegram Web App غير متاحة، التشغيل كموقع ويب عادي');
-    }
-  }
 
-  // إنشاء بطاقات الـ NFTs مع إعادة المحاولة
-  function generateNFTs(attempt = 0) {
-    const nftGrid = document.getElementById('nftGrid');
-    const loading = document.getElementById('loading');
-    if (!nftGrid) {
-      if (attempt < 5) {
-        setTimeout(() => generateNFTs(attempt + 1), 200);
+    // تهيئة Telegram Web App (اختياري)
+    function initializeTelegramWebApp() {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand(); // فتح الصفحة على الشاشة كاملة
+        console.log('تم تهيئة Telegram Web App');
       } else {
-        console.error('عنصر nftGrid غير موجود بعد 5 محاولات!');
-        if (loading) loading.style.display = 'none';
+        console.log('واجهة Telegram Web App غير متاحة، التشغيل كموقع ويب عادي');
       }
-      return;
     }
-    if (loading) loading.style.display = 'none'; // إخفاء رسالة التحميل
-    nftGrid.innerHTML = ''; // تفريغ المحتوى السابق
-    nftData.forEach((nft) => {
-      const nftCard = document.createElement('div');
-      nftCard.className = 'nft-card';
-      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
-      nftCard.innerHTML = `
-        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
-        <div class="nft-name">${nft.name}</div>
-        <div class="nft-model">${nft.model}</div>
-        <div class="nft-price">
-          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
-        </div>
-      `;
-      nftGrid.appendChild(nftCard);
-    });
-  }
 
-  // تهيئة الصفحة
-  function initializePage() {
-    initializeTelegramWebApp();
-    generateNFTs();
-  }
-
-  // تشغيل التهيئة لما الصفحة تتحمل
-  document.addEventListener('DOMContentLoaded', initializePage);
-
-  // تشغيل احتياطي لمتصفح تيليجرام
-  window.addEventListener('load', initializePage);
-
-  // حدث خاص بتيليجرام (إذا كان Web App مفعل)
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.onEvent('viewportChanged', initializePage);
-  }
-
-  // إظهار قسم معين وتحديث القائمة
-  function showSection(sectionId, element) {
-    document.querySelectorAll('.section').forEach(section => {
-      section.classList.remove('active');
-    });
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.classList.add('active');
-    }
-    document.querySelectorAll('.bottom-nav div').forEach(nav => {
-      nav.classList.remove('active');
-    });
-    element.classList.add('active');
-    if (sectionId === 'market') {
-      generateNFTs(); // تحديث البطاقات لما تختار قسم Market
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // فتح/قفل القائمة المنسدلة
-  function toggleDropdown(id) {
-    const dropdown = document.getElementById(id);
-    if (dropdown) {
-      dropdown.classList.toggle('active');
-    }
-  }
-
-  // قفل القوائم المنسدلة لو ضغطت برا
-  document.addEventListener('click', function(event) {
-    if (!event.target.closest('.dropdown')) {
-      document.querySelectorAll('.dropdown').forEach(dropdown => {
-        dropdown.classList.remove('active');
+    // إنشاء بطاقات الـ NFTs مع إعادة المحاولة
+    function generateNFTs(attempt = 0) {
+      const nftGrid = document.getElementById('nftGrid');
+      const loading = document.getElementById('loading');
+      if (!nftGrid) {
+        if (attempt < 5) {
+          setTimeout(() => generateNFTs(attempt + 1), 200);
+        } else {
+          console.error('عنصر nftGrid غير موجود بعد 5 محاولات!');
+          if (loading) loading.style.display = 'none';
+        }
+        return;
+      }
+      if (loading) loading.style.display = 'none'; // إخفاء رسالة التحميل
+      nftGrid.innerHTML = ''; // تفريغ المحتوى السابق
+      nftData.forEach((nft) => {
+        const nftCard = document.createElement('div');
+        nftCard.className = 'nft-card';
+        nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+        nftCard.innerHTML = `
+          <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+          <div class="nft-name">${nft.name}</div>
+          <div class="nft-model">${nft.model}</div>
+          <div class="nft-price">
+            <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+          </div>
+        `;
+        nftGrid.appendChild(nftCard);
       });
     }
-  });
 
-  // تصفية الـ NFTs حسب الاسم
-  function filterNFTs(name) {
-    const filteredNFTs = name === 'All' ? nftData : nftData.filter(nft => nft.name === name);
-    const nftGrid = document.getElementById('nftGrid');
-    if (!nftGrid) return;
-    nftGrid.innerHTML = '';
-    filteredNFTs.forEach((nft) => {
-      const nftCard = document.createElement('div');
-      nftCard.className = 'nft-card';
-      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
-      nftCard.innerHTML = `
-        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
-        <div class="nft-name">${nft.name}</div>
-        <div class="nft-model">${nft.model}</div>
-        <div class="nft-price">
-          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
-        </div>
-      `;
-      nftGrid.appendChild(nftCard);
-    });
-  }
-
-  // ترتيب الـ NFTs حسب السعر
-  function sortNFTs(criteria) {
-    let sortedNFTs = [...nftData];
-    if (criteria === 'high-to-low') {
-      sortedNFTs.sort((a, b) => b.price - a.price);
-    } else if (criteria === 'low-to-high') {
-      sortedNFTs.sort((a, b) => a.price - b.price);
+    // تهيئة الصفحة
+    function initializePage() {
+      initializeTelegramWebApp();
+      generateNFTs();
     }
-    const nftGrid = document.getElementById('nftGrid');
-    if (!nftGrid) return;
-    nftGrid.innerHTML = '';
-    sortedNFTs.forEach((nft) => {
-      const nftCard = document.createElement('div');
-      nftCard.className = 'nft-card';
-      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
-      nftCard.innerHTML = `
-        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
-        <div class="nft-name">${nft.name}</div>
-        <div class="nft-model">${nft.model}</div>
-        <div class="nft-price">
-          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
-        </div>
-      `;
-      nftGrid.appendChild(nftCard);
-    });
-  }
 
-  // البحث في الـ NFTs
-  document.getElementById('searchInput').addEventListener('input', function() {
-    const query = this.value.toLowerCase();
-    const filteredNFTs = nftData.filter(nft => 
-      nft.name.toLowerCase().includes(query) || 
-      nft.model.toLowerCase().includes(query)
-    );
-    const nftGrid = document.getElementById('nftGrid');
-    if (!nftGrid) return;
-    nftGrid.innerHTML = '';
-    filteredNFTs.forEach((nft) => {
-      const nftCard = document.createElement('div');
-      nftCard.className = 'nft-card';
-      nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
-      nftCard.innerHTML = `
-        <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
-        <div class="nft-name">${nft.name}</div>
-        <div class="nft-model">${nft.model}</div>
-        <div class="nft-price">
-          <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
-        </div>
-      `;
-      nftGrid.appendChild(nftCard);
-    });
-  });
+    // تشغيل التهيئة لما الصفحة تتحمل
+    document.addEventListener('DOMContentLoaded', initializePage);
 
-  // فتح نافذة Top Up مع العداد
-  function openTopUpModal() {
-    const modal = document.getElementById('topUpModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      document.getElementById('transactionId').value = '';
-      document.getElementById('topUpErrorMessage').style.display = 'none';
-      document.getElementById('processingMessage').style.display = 'none';
-      startCountdown();
+    // تشغيل احتياطي لمتصفح تيليجرام
+    window.addEventListener('load', initializePage);
+
+    // حدث خاص بتيليجرام (إذا كان Web App مفعل)
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.onEvent('viewportChanged', initializePage);
     }
-  }
 
-  // بدء عداد 10 دقايق
-  function startCountdown() {
-    let timeLeft = 10 * 60; // 10 دقايق بالثواني
-    const countdownElement = document.getElementById('countdown10min');
-    if (!countdownElement) return;
-    const countdownInterval = setInterval(() => {
-      const minutes = Math.floor(timeLeft / 60);
-      const seconds = timeLeft % 60;
-      countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-      timeLeft--;
-      if (timeLeft < 0) {
-        clearInterval(countdownInterval);
-        countdownElement.textContent = '0:00';
-        closeModal('topUpModal');
+    // إظهار قسم معين وتحديث القائمة
+    function showSection(sectionId, element) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.classList.add('active');
       }
-    }, 1000);
-    document.getElementById('topUpModal').dataset.countdownInterval = countdownInterval;
-  }
+      document.querySelectorAll('.bottom-nav div').forEach(nav => {
+        nav.classList.remove('active');
+      });
+      element.classList.add('active');
+      if (sectionId === 'market') {
+        generateNFTs(); // تحديث البطاقات لما تختار قسم Market
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-  // نسخ عنوان المحفظة
-  function copyAddress() {
-    const address = 'UQClwREuJ6VsDd54BQatO-a5Zhn3M29DQHGTIMWyxQcIP3x1';
-    navigator.clipboard.writeText(address).then(() => {
-      alert('Copied!');
-    }).catch(err => {
-      console.error('فشل نسخ العنوان:', err);
-      alert('فشل نسخ العنوان.');
+    // فتح/قفل القائمة المنسدلة
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      if (dropdown) {
+        dropdown.classList.toggle('active');
+      }
+    }
+
+    // قفل القوائم المنسدلة لو ضغطت برا
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+          dropdown.classList.remove('active');
+        });
+      }
     });
-  }
 
-  // إرسال معاملة Top Up
-  function submitTopUp() {
-    const transactionId = document.getElementById('transactionId').value.trim();
-    const errorMessage = document.getElementById('topUpErrorMessage');
-    const processingMessage = document.getElementById('processingMessage');
-    if (!transactionId) {
-      errorMessage.style.display = 'flex';
-      return;
+    // تصفية الـ NFTs حسب الاسم
+    function filterNFTs(name) {
+      const filteredNFTs = name === 'All' ? nftData : nftData.filter(nft => nft.name === name);
+      const nftGrid = document.getElementById('nftGrid');
+      if (!nftGrid) return;
+      nftGrid.innerHTML = '';
+      filteredNFTs.forEach((nft) => {
+        const nftCard = document.createElement('div');
+        nftCard.className = 'nft-card';
+        nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+        nftCard.innerHTML = `
+          <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+          <div class="nft-name">${nft.name}</div>
+          <div class="nft-model">${nft.model}</div>
+          <div class="nft-price">
+            <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+          </div>
+        `;
+        nftGrid.appendChild(nftCard);
+      });
     }
-    errorMessage.style.display = 'none';
-    processingMessage.style.display = 'flex';
-    setTimeout(() => {
-      closeModal('topUpModal');
-    }, 2000); // قفل النافذة بعد 2 ثانية
-  }
 
-  // فتح نافذة Withdraw
-  function openWithdrawModal() {
-    const modal = document.getElementById('withdrawModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      document.getElementById('errorMessage').style.display = 'none';
+    // ترتيب الـ NFTs حسب السعر
+    function sortNFTs(criteria) {
+      let sortedNFTs = [...nftData];
+      if (criteria === 'high-to-low') {
+        sortedNFTs.sort((a, b) => b.price - a.price);
+      } else if (criteria === 'low-to-high') {
+        sortedNFTs.sort((a, b) => a.price - b.price);
+      }
+      const nftGrid = document.getElementById('nftGrid');
+      if (!nftGrid) return;
+      nftGrid.innerHTML = '';
+      sortedNFTs.forEach((nft) => {
+        const nftCard = document.createElement('div');
+        nftCard.className = 'nft-card';
+        nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+        nftCard.innerHTML = `
+          <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+          <div class="nft-name">${nft.name}</div>
+          <div class="nft-model">${nft.model}</div>
+          <div class="nft-price">
+            <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+          </div>
+        `;
+        nftGrid.appendChild(nftCard);
+      });
     }
-  }
 
-  // فتح نافذة Buy
-  function openBuyModal() {
-    const modal = document.getElementById('buyModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      document.getElementById('buyErrorMessage').style.display = 'none';
+    // البحث في الـ NFTs
+    document.getElementById('searchInput').addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const filteredNFTs = nftData.filter(nft => 
+        nft.name.toLowerCase().includes(query) || 
+        nft.model.toLowerCase().includes(query)
+      );
+      const nftGrid = document.getElementById('nftGrid');
+      if (!nftGrid) return;
+      nftGrid.innerHTML = '';
+      filteredNFTs.forEach((nft) => {
+        const nftCard = document.createElement('div');
+        nftCard.className = 'nft-card';
+        nftCard.setAttribute('data-id', `${nft.name}_${nft.model}`);
+        nftCard.innerHTML = `
+          <img src="${nft.image}" alt="${nft.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/150'">
+          <div class="nft-name">${nft.name}</div>
+          <div class="nft-model">${nft.model}</div>
+          <div class="nft-price">
+            <button class="price-button" onclick="openNFTBuyModal('${nft.name}_${nft.model}')">${nft.price.toFixed(2)} TON</button>
+          </div>
+        `;
+        nftGrid.appendChild(nftCard);
+      });
+    });
+
+    // فتح نافذة Top Up مع العداد
+    function openTopUpModal() {
+      const modal = document.getElementById('topUpModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.getElementById('transactionId').value = '';
+        document.getElementById('topUpErrorMessage').style.display = 'none';
+        document.getElementById('processingMessage').style.display = 'none';
+        startCountdown();
+      }
     }
-  }
 
-  // فتح نافذة شراء NFT
-  function openNFTBuyModal(id) {
-    const [name, model] = id.split('_');
-    const nft = nftData.find(n => n.name === name && n.model === model);
-    const modal = document.getElementById('nftBuyModal');
-    if (modal && nft) {
-      document.getElementById('nftImage').src = nft.image;
-      document.getElementById('nftName').textContent = `${nft.name} - ${nft.model.replace('Model ', '')}`;
-      document.getElementById('nftModel').textContent = `${nft.modelPercent}%`;
-      document.getElementById('nftSymbol').textContent = `${nft.symbolPercent}%`;
-      document.getElementById('nftBackdrop').textContent = `${nft.backdropPercent}%`;
-      document.getElementById('nftPrice').textContent = `Buy ${nft.price.toFixed(2)} TON`; // تغيير "شراء" إلى "Buy"
-      modal.style.display = 'flex';
-      document.getElementById('nftBuyErrorMessage').style.display = 'none';
-    }
-  }
-
-  // قفل النافذة
-  function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = 'none';
-      if (modalId === 'topUpModal') {
-        const countdownInterval = modal.dataset.countdownInterval;
-        if (countdownInterval) {
+    // بدء عداد 10 دقايق
+    function startCountdown() {
+      let timeLeft = 10 * 60; // 10 دقايق بالثواني
+      const countdownElement = document.getElementById('countdown10min');
+      if (!countdownElement) return;
+      const countdownInterval = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timeLeft--;
+        if (timeLeft < 0) {
           clearInterval(countdownInterval);
+          countdownElement.textContent = '0:00';
+          closeModal('topUpModal');
+        }
+      }, 1000);
+      document.getElementById('topUpModal').dataset.countdownInterval = countdownInterval;
+    }
+
+    // نسخ عنوان المحفظة
+    function copyAddress() {
+      const address = 'UQClwREuJ6VsDd54BQatO-a5Zhn3M29DQHGTIMWyxQcIP3x1';
+      navigator.clipboard.writeText(address).then(() => {
+        alert('Copied!');
+      }).catch(err => {
+        console.error('فشل نسخ العنوان:', err);
+        alert('فشل نسخ العنوان.');
+      });
+    }
+
+    // إرسال معاملة Top Up
+    function submitTopUp() {
+      const transactionId = document.getElementById('transactionId').value.trim();
+      const errorMessage = document.getElementById('topUpErrorMessage');
+      const processingMessage = document.getElementById('processingMessage');
+      if (!transactionId) {
+        errorMessage.style.display = 'flex';
+        return;
+      }
+      errorMessage.style.display = 'none';
+      processingMessage.style.display = 'flex';
+      setTimeout(() => {
+        closeModal('topUpModal');
+      }, 2000); // قفل النافذة بعد 2 ثانية
+    }
+
+    // فتح نافذة Withdraw
+    function openWithdrawModal() {
+      const modal = document.getElementById('withdrawModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.getElementById('errorMessage').style.display = 'none';
+      }
+    }
+
+    // فتح نافذة Buy
+    function openBuyModal() {
+      const modal = document.getElementById('buyModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.getElementById('buyErrorMessage').style.display = 'none';
+      }
+    }
+
+    // فتح نافذة شراء NFT
+    function openNFTBuyModal(id) {
+      const [name, model] = id.split('_');
+      const nft = nftData.find(n => n.name === name && n.model === model);
+      const modal = document.getElementById('nftBuyModal');
+      if (modal && nft) {
+        document.getElementById('nftImage').src = nft.image;
+        document.getElementById('nftName').textContent = `${nft.name} - ${nft.model.replace('Model ', '')}`;
+        document.getElementById('nftModel').textContent = `${nft.modelPercent}%`;
+        document.getElementById('nftSymbol').textContent = `${nft.symbolPercent}%`;
+        document.getElementById('nftBackdrop').textContent = `${nft.backdropPercent}%`;
+        document.getElementById('nftPrice').textContent = `Buy ${nft.price.toFixed(2)} TON`; // تغيير "شراء" إلى "Buy"
+        modal.style.display = 'flex';
+        document.getElementById('nftBuyErrorMessage').style.display = 'none';
+      }
+    }
+
+    // قفل النافذة
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'none';
+        if (modalId === 'topUpModal') {
+          const countdownInterval = modal.dataset.countdownInterval;
+          if (countdownInterval) {
+            clearInterval(countdownInterval);
+          }
         }
       }
     }
-  }
 
-  // دالة السحب
-  function withdraw() {
-    const errorMessage = document.getElementById('errorMessage');
-    if (errorMessage) {
-      errorMessage.style.display = 'flex';
-    }
-  }
-
-  // شراء الباقة
-  function buyPackage() {
-    const errorMessage = document.getElementById('buyErrorMessage');
-    if (errorMessage) {
-      errorMessage.style.display = 'flex';
-    }
-  }
-
-  // شراء NFT
-  function buyNFT() {
-    const errorMessage = document.getElementById('nftBuyErrorMessage');
-    if (errorMessage) {
-      errorMessage.style.display = 'flex';
-      setTimeout(() => {
-        closeModal('nftBuyModal');
-      }, 2000); // قفل النافذة بعد 2 ثانية
-    }
-  }
-
-  // التمرير لأعلى
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // إظهار/إخفاء زر التمرير لأعلى
-  window.addEventListener('scroll', () => {
-    const scrollBtn = document.querySelector('.scroll-top-btn');
-    if (scrollBtn) {
-      if (window.scrollY > 300) {
-        scrollBtn.classList.add('visible');
-      } else {
-        scrollBtn.classList.remove('visible');
+    // دالة السحب
+    function withdraw() {
+      const errorMessage = document.getElementById('errorMessage');
+      if (errorMessage) {
+        errorMessage.style.display = 'flex';
       }
     }
-  });
-</script>
+
+    // شراء الباقة
+    function buyPackage() {
+      const errorMessage = document.getElementById('buyErrorMessage');
+      if (errorMessage) {
+        errorMessage.style.display = 'flex';
+      }
+    }
+
+    // شراء NFT
+    function buyNFT() {
+      const errorMessage = document.getElementById('nftBuyErrorMessage');
+      if (errorMessage) {
+        errorMessage.style.display = 'flex';
+        setTimeout(() => {
+          closeModal('nftBuyModal');
+        }, 2000); // قفل النافذة بعد 2 ثانية
+      }
+    }
+
+    // التمرير لأعلى
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // إظهار/إخفاء زر التمرير لأعلى
+    window.addEventListener('scroll', () => {
+      const scrollBtn = document.querySelector('.scroll-top-btn');
+      if (scrollBtn) {
+        if (window.scrollY > 300) {
+          scrollBtn.classList.add('visible');
+        } else {
+          scrollBtn.classList.remove('visible');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
